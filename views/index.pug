@@ -1,9 +1,18 @@
 html
   head
     title hello world!
+    link(rel='stylesheet' href='/static/css/index.css')
   body
-    h1 hello
-    ul#app
-    input#user(placeholder='Please input')
-    button#btn(type='button') Ok
-    script(src='/static/index.js')
+    h1 hello!
+    article
+      section
+        ul#app
+        input#user(placeholder='Please input')
+        button#btn(type='button') Ok
+      section
+        input#file(
+          type='file'
+          accept='image/*'
+        )
+        button#send(type='button') Send
+    script(src='/static/js/index.js')
