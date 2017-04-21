@@ -28,7 +28,7 @@ function getBinaryString(file) {
     reader.onload = (e) => {
       resolve(e.target.result)
     }
-    reader.readAsBinaryString(file)
+    reader.readAsArrayBuffer(file)
   })
 }
 

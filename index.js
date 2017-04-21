@@ -42,7 +42,7 @@ var wss = new websocket.Server({
 
 wss.on('connection', function(ws) {
   ws.on('message', function(data, flags) {
-    if (flags.binary) {
+    if (!flags.binary) {
       console.log('received: %s', data)      
       ws.send('Server: ' +  data)
     } else {
