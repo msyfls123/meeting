@@ -1,5 +1,11 @@
+# directory
 node_modules/
 public/
+upload/
+ssl/
+.idea/
+
+# file
 yarn.lock
 .DS_Store
 *.log

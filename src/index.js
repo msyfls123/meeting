@@ -25,10 +25,18 @@ function item(val) {
 function getBinaryString(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
-    reader.onload = (e) => {
-      resolve(e.target.result)
+    reader.onload = () => {
+      resolve(reader.result)
     }
     reader.readAsArrayBuffer(file)
+  })
+}
+
+function getFileName() {
+  return new Promise((resolve, reject) => {
+    const fileName = input.value
+    !fileName && reject('No file name!')
+    resolve(fileName)
   })
 }
 
@@ -39,13 +47,20 @@ ok.addEventListener('click', function(){
 
 send.addEventListener('click', async function(e){
   const file = files.files[0]
-  await getBinaryString(file).then(
-      (res) => {
-        console.log(res)
-        ws.send(res)
-      },
-    (err) => {console.log(err)}
-  )
+  try {
+    let fileName = await getFileName()
+    let fileExt = file.type.split('/')[1]
+    ws.send(fileName + '.' + fileExt)
+    getBinaryString(file).then(
+        (res) => {
+          console.log(res)
+          ws.send(res)
+        },
+      (err) => {console.log(err)}
+    )
+  } catch(err) {
+    alert(err)
+  }
 })
 
 

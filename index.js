@@ -10,10 +10,12 @@ var https = require('https'),
 
 var compiler = webpack(config),
     DEVELOP = process.env.NODE_ENV !== 'product',
-    UPLOAD = path.join(__dirname, 'upload')
+    UPLOAD = path.join(__dirname, 'upload'),
+    SSL = path.join(__dirname, 'ssl')
 
 var app = express()
 app.set('view engine', 'pug')
+app.use('/upload', express.static('upload'))
 
 if (DEVELOP) {
   app.use(webpackDevMiddleware(compiler, {
@@ -28,12 +30,14 @@ if (DEVELOP) {
 
 
 app.get('/', function(req, res) {
-  res.render('index')
+  let imgFiles = fs.readdirSync(UPLOAD)
+  imgFiles = imgFiles.filter((f) => /(jpg|jpeg|gif|png)/.test(f))
+  res.render('index', {imgFiles: imgFiles})
 })
 
 var server = https.createServer({
-  key: fs.readFileSync('/Users/kimi/ssl/domain.key'),
-  cert: fs.readFileSync('/Users/kimi/ssl/signed.crt')
+  key: fs.readFileSync(path.join(SSL, 'server.key')),
+  cert: fs.readFileSync(path.join(SSL, 'server.crt'))
 }, app)
 
 var wss = new websocket.Server({
@@ -44,10 +48,10 @@ wss.on('connection', function(ws) {
   ws.on('message', function(data, flags) {
     if (!flags.binary) {
       console.log('received: %s', data)      
+      ws.fileName = data
       ws.send('Server: ' +  data)
     } else {
-      var binaryData = new Buffer(data),
-          filename = 'temp.jpeg'
+      var filename = ws.fileName || Date.now() + '.jpg'
       saveData(data, filename)
     }
   })

@@ -15,4 +15,11 @@ html
           accept='image/*'
         )
         button#send(type='button') Send
+      section
+        ul.img-list
+          each file in imgFiles
+            li
+              img(src=`/upload/${file}`)
+              dd #{file}
+           
     script(src='/static/js/index.js')
